@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ybk/home.dart';
 
 class YbkApp extends StatelessWidget {
@@ -7,10 +8,10 @@ class YbkApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "亦播客",
-      theme: new ThemeData(primaryColor: Colors.black),
+      theme: new ThemeData(
+        primaryColor: Colors.white,
+      ),
       home: new Home(),
     );
   }
 }
-
-

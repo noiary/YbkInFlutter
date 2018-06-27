@@ -54,6 +54,7 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final BottomNavigationBar bottomNavigationBar = new BottomNavigationBar(
+      fixedColor: Colors.black,
       items: _bottomNavigationBarItems,
       currentIndex: _currentIndex,
       type: BottomNavigationBarType.fixed,

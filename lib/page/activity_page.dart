@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:ybk/common.dart';
 
 class ActivityPage extends StatefulWidget {
   @override
@@ -10,10 +11,6 @@ class ActivityPage extends StatefulWidget {
 class ActivityPageState extends State<ActivityPage> {
   @override
   Widget build(BuildContext context) {
-    return new Center(
-        child: new Text(
-      "活动",
-      style: new TextStyle(fontSize: 80.0),
-    ));
+    return new Center(child: new CommonTextInCenter("活动"));
   }
 }

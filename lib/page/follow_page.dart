@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:ybk/common.dart';
 
 class FollowPage extends StatefulWidget {
   @override
@@ -10,10 +11,6 @@ class FollowPage extends StatefulWidget {
 class FollowPageState extends State<FollowPage> {
   @override
   Widget build(BuildContext context) {
-    return new Center(
-        child: new Text(
-      "关注",
-      style: new TextStyle(fontSize: 80.0),
-    ));
+    return new CommonTextInCenter("关注");
   }
 }
