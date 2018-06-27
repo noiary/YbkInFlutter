@@ -1,4 +1,0 @@
-#Wed Jun 27 12:24:54 CST 2018
-base.0=/Users/maodq/Project/flutter/ybk/build/app/intermediates/transforms/dexMerger/debug/0
-path.0=classes.dex
-renamed.0=classes.dex
