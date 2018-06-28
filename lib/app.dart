@@ -8,10 +8,12 @@ class YbkApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "亦播客",
-      theme: new ThemeData(
+      theme: ThemeData(
         primaryColor: Colors.white,
+        accentColor: Colors.pink.shade400,
+        platform: TargetPlatform.iOS,
       ),
-      home: new Home(),
+      home: Home(),
     );
   }
 }

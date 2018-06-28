@@ -65,11 +65,11 @@ class HomeState extends State<Home> {
       },
     );
 
-    return new Scaffold(
-      body: new Center(
-        child: _bodyContainer[_currentIndex],
-      ),
-      bottomNavigationBar: bottomNavigationBar,
+    EdgeInsets padding =  MediaQuery.of(context).padding;
+
+    return Scaffold(
+      body: Center(child: _bodyContainer[_currentIndex]),
+      bottomNavigationBar: SafeArea(bottom: true, child: bottomNavigationBar),
     );
   }
 }

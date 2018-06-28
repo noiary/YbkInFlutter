@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:ybk/common.dart';
-
+/// TAB-活动
 class ActivityPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
