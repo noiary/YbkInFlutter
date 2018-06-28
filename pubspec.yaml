@@ -10,6 +10,8 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 dependencies:
+# 图片缓存
+  cached_network_image: "^0.4.1"
   flutter:
     sdk: flutter
 
@@ -20,7 +22,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

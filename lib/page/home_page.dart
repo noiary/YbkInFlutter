@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ybk/common.dart';
 
 import 'dart:async';
@@ -44,10 +45,16 @@ class _Item extends StatelessWidget {
       children: <Widget>[
         AspectRatio(
           aspectRatio: 9.0 / 14.5,
-          child: Image.network(
-            _data.imgUrl,
-            fit: BoxFit.cover,
-          ),
+          child: new CachedNetworkImage(
+              imageUrl: _data.imgUrl,
+              placeholder: Icon(
+                Icons.cloud_download,
+                size: 80.0,
+                color: Colors.black12,
+              ),
+              fadeInDuration: Duration(milliseconds: 300),
+              errorWidget: new Icon(Icons.error),
+              fit: BoxFit.cover),
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 6.0),
@@ -74,13 +81,18 @@ class _RecommendBean {
   }
 }
 
+class _Cache {
+  static List<_RecommendBean> _recoomendData;
+  static List<_RecommendBean> _latestData;
+}
+
 class _RecommendPageState extends State<_RecommendPage> {
-  List<_RecommendBean> _data;
+//  List<_RecommendBean> _data;
 
   @override
   void initState() {
     super.initState();
-    if (_data == null) _requestData();
+    if (_Cache._recoomendData == null) _requestData();
   }
 
   void _requestData() async {
@@ -92,13 +104,14 @@ class _RecommendPageState extends State<_RecommendPage> {
     setState(() {
       final responseJson = json.decode(response.body);
       List<dynamic> data = responseJson["data"];
-      _data = data.map((dynamic map) => _RecommendBean.fromJson(map)).toList();
+      _Cache._recoomendData =
+          data.map((dynamic map) => _RecommendBean.fromJson(map)).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _data == null
+    return _Cache._recoomendData == null
         ? Center(
             child: CircularProgressIndicator(),
           )
@@ -107,7 +120,7 @@ class _RecommendPageState extends State<_RecommendPage> {
             childAspectRatio: 9.0 / 16.0,
             crossAxisSpacing: 1.0,
             mainAxisSpacing: 1.0,
-            children: _data?.map((d) => _Item(d))?.toList(),
+            children: _Cache._recoomendData?.map((d) => _Item(d))?.toList(),
           );
   }
 }
@@ -121,12 +134,12 @@ class _LatestPage extends StatefulWidget {
 }
 
 class _LatestPageState extends State<_LatestPage> {
-  List<_RecommendBean> _data;
+//  List<_RecommendBean> _data;
 
   @override
   void initState() {
     super.initState();
-    if (_data == null) _requestData();
+    if (_Cache._latestData == null) _requestData();
   }
 
   void _requestData() async {
@@ -138,14 +151,15 @@ class _LatestPageState extends State<_LatestPage> {
     setState(() {
       final responseJson = json.decode(response.body);
       List<dynamic> data = responseJson["data"]["videos"];
-      _data = data.map((dynamic map) => _RecommendBean.fromJson(map)).toList();
+      _Cache._latestData =
+          data.map((dynamic map) => _RecommendBean.fromJson(map)).toList();
       print("hhh");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _data == null
+    return _Cache._latestData == null
         ? Center(
             child: CircularProgressIndicator(),
           )
@@ -154,7 +168,7 @@ class _LatestPageState extends State<_LatestPage> {
             childAspectRatio: 9.0 / 16.0,
             crossAxisSpacing: 1.0,
             mainAxisSpacing: 1.0,
-            children: _data?.map((d) => _Item(d))?.toList(),
+            children: _Cache._latestData?.map((d) => _Item(d))?.toList(),
           );
   }
 }
@@ -169,6 +183,10 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final tabs = ["推荐", "最新"];
+  final List<Widget> _tabWidgets = [
+    _RecommendPage(),
+    _LatestPage(),
+  ];
   TabController _tabController;
 
   @override
@@ -185,38 +203,38 @@ class HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    final appbar = new AppBar(
+      elevation: 0.5,
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 10.0),
+          child: Icon(
+            Icons.search,
+            color: Colors.black38,
+          ),
+        )
+      ],
+      title: TabBar(
+        indicatorSize: TabBarIndicatorSize.label,
+        indicatorWeight: 2.0,
+        indicatorColor: Colors.black87,
+        controller: _tabController,
+        tabs: tabs.map((text) => _Tab(text)).toList(),
+      ),
+    );
+
+    final body = DefaultTabController(
+      length: tabs.length,
+      child: new TabBarView(
+        controller: _tabController,
+        children: _tabWidgets,
+      ),
+    );
+
     return SafeArea(
       child: Scaffold(
-        appBar: new AppBar(
-          elevation: 0.5,
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Icon(
-                Icons.search,
-                color: Colors.black38,
-              ),
-            )
-          ],
-          title: TabBar(
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorWeight: 2.0,
-            indicatorColor: Colors.black87,
-            controller: _tabController,
-            tabs: tabs.map((text) => _Tab(text)).toList(),
-          ),
-        ),
-        body: DefaultTabController(
-          length: tabs.length,
-          child: new TabBarView(
-            controller: _tabController,
-//            children: tabs.map((String text) => CommonText(text)).toList(),
-            children: <Widget>[
-              _RecommendPage(),
-              _LatestPage(),
-            ],
-          ),
-        ),
+        appBar: appbar,
+        body: body,
       ),
     );
   }
