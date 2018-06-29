@@ -182,7 +182,8 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  final tabs = ["推荐", "最新"];
+  final tabs = ["推荐", "最新"
+      ""];
   final List<Widget> _tabWidgets = [
     _RecommendPage(),
     _LatestPage(),
@@ -231,11 +232,9 @@ class HomePageState extends State<HomePage>
       ),
     );
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: appbar,
-        body: body,
-      ),
+    return Scaffold(
+      appBar: appbar,
+      body: body,
     );
   }
 }
