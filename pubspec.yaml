@@ -10,8 +10,10 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 dependencies:
-# 图片缓存
+  # 图片缓存
   cached_network_image: "^0.4.1"
+  # video
+  video_player: "^0.6.4"
   flutter:
     sdk: flutter
 

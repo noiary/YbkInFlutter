@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:ybk/video/video_page.dart';
 
 /// TAB-首页
 class _Tab extends StatelessWidget {
@@ -35,55 +36,88 @@ class _RecommendPage extends StatefulWidget {
 }
 
 class _Item extends StatelessWidget {
-  _RecommendBean _data;
+  RecommendBean _data;
 
   _Item(this._data) : assert(_data != null);
 
+  void _onTap(BuildContext context) {
+    print("$_data");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => VideoPage(
+                data: _data,
+              )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 9.0 / 14.5,
-          child: new CachedNetworkImage(
-              imageUrl: _data.imgUrl,
-              placeholder: Icon(
-                Icons.cloud_download,
-                size: 80.0,
-                color: Colors.black12,
-              ),
-              fadeInDuration: Duration(milliseconds: 300),
-              errorWidget: new Icon(Icons.error),
-              fit: BoxFit.cover),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 6.0),
-          child: Text(
-            _data.title,
-            maxLines: 1,
-            style: TextStyle(fontSize: 12.0),
-            textAlign: TextAlign.left,
+    return GestureDetector(
+      onTap: () {
+        _onTap(context);
+      },
+      child: Column(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 9.0 / 14.5,
+            child: new CachedNetworkImage(
+                imageUrl: _data.imgUrl,
+//              placeholder: Icon(
+//                Icons.cloud_download,
+//                size: 80.0,
+//                color: Colors.black12,
+//              ),
+                fadeInDuration: Duration(milliseconds: 200),
+                placeholder: Container(color: Color(0xfff0f0f0)),
+                errorWidget: new Icon(Icons.error),
+                fit: BoxFit.cover),
           ),
-        ),
-      ],
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 6.0),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.0),
+              child: Text(
+                _data.title,
+                maxLines: 1,
+                style: TextStyle(fontSize: 12.0),
+                textAlign: TextAlign.left,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class _RecommendBean {
+class RecommendBean {
   final imgUrl;
   final title;
+  final _videoUrl;
 
-  _RecommendBean(this.imgUrl, this.title);
+  get videoUrl => this._videoUrl;
 
-  factory _RecommendBean.fromJson(Map<String, dynamic> data) {
-    return new _RecommendBean(data["ispic"], data["title"]);
+  RecommendBean(this.imgUrl, this.title, this._videoUrl);
+
+  @override
+  String toString() {
+    return 'RecommendBean{imgUrl: $imgUrl, title: $title, _videoUrl: $_videoUrl}';
+  }
+
+  factory RecommendBean.fromJson(Map<String, dynamic> data) {
+    return new RecommendBean(data["ispic"], data["title"], data["liveurl"]);
   }
 }
 
 class _Cache {
-  static List<_RecommendBean> _recoomendData;
-  static List<_RecommendBean> _latestData;
+  static List<RecommendBean> _recoomendData;
+  static List<RecommendBean> _latestData;
+
+  static void release() {
+    _recoomendData = null;
+    _latestData = null;
+  }
 }
 
 class _RecommendPageState extends State<_RecommendPage> {
@@ -105,8 +139,15 @@ class _RecommendPageState extends State<_RecommendPage> {
       final responseJson = json.decode(response.body);
       List<dynamic> data = responseJson["data"];
       _Cache._recoomendData =
-          data.map((dynamic map) => _RecommendBean.fromJson(map)).toList();
+          data.map((dynamic map) => RecommendBean.fromJson(map)).toList();
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _Cache.release();
   }
 
   @override
@@ -152,7 +193,7 @@ class _LatestPageState extends State<_LatestPage> {
       final responseJson = json.decode(response.body);
       List<dynamic> data = responseJson["data"]["videos"];
       _Cache._latestData =
-          data.map((dynamic map) => _RecommendBean.fromJson(map)).toList();
+          data.map((dynamic map) => RecommendBean.fromJson(map)).toList();
       print("hhh");
     });
   }
@@ -182,8 +223,11 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  final tabs = ["推荐", "最新"
-      ""];
+  final tabs = [
+    "推荐",
+    "最新"
+        ""
+  ];
   final List<Widget> _tabWidgets = [
     _RecommendPage(),
     _LatestPage(),
