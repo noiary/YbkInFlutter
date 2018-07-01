@@ -145,9 +145,8 @@ class _RecommendPageState extends State<_RecommendPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
-    _Cache.release();
+//    _Cache.release();
   }
 
   @override
